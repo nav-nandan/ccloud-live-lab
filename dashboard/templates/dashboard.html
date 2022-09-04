@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <title>Confluent Cloud Live Lab SG - Dashboard</title>
+</head>
+<body>
+<br><br><br>
+<table>
+<tr align="center">
+  <td style="width:200px"></td>
+
+  <td style="width:300px">
+    <div class="card text-white bg-info mb-3" style="max-width: 18rem;">
+      <div class="card-header">Real-Time Accounts Dashboard</div>
+      <div class="card-body">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif?20151024034921" width="50" alt="40 image"/>
+        <h5 class="card-title">
+        </h5>
+        <p id="account_balance" class="card-text"></p>
+      </div>
+    </div>
+  </td>
+</tr>
+</table>
+<script>
+  $(document).ready(function() {
+    var accounts=[];
+
+    function getaccountbalance() {
+      $.ajax({
+        type: "GET",
+        url: '/getaccountbalance',
+        dataType: 'json',
+        contentType: 'application/json',
+        async: false,
+        success: function(result) {
+          for (var i=0; i<result.length; i++) {
+            message = result[i]
+            console.log(message)
+            if(accounts.length == 0)
+              account = {};
+              account[message.ACCOUNT_ID] = message.ACCOUNT_BALANCE;
+              accounts.push(account);
+      
+            accounts.forEach(acc => acc[message.ACCOUNT_ID] = message.ACCOUNT_BALANCE);
+
+            var response = "";
+
+            for (var key in account) {
+              response = response + "<br>" + key + " <======> " + account[key];
+            }
+
+            $("#account_balance").html(response);
+          }
+        }
+      });
+    }
+
+    setInterval(getaccountbalance, 5000);
+
+  });
+</script>
+</body>
+</html>

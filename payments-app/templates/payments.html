@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <title>Confluent Cloud Live Lab SG - Payments App</title>
+</head>
+<body>
+<br><br><br>
+<table>
+<tr align="center">
+  <td style="width:200px"></td>
+
+  <td style="width:300px">
+    <div class="card text-white bg-info mb-3" style="max-width: 18rem;">
+      <div class="card-header">Make A Friend, Send A Gift!</div>
+      <div class="card-body">
+        <input type="text" class="form-control" id="username" placeholder="Enter Confluent Cloud API Key">
+        <br>
+        <input type="password" class="form-control" id="password" placeholder="Enter Confluent Cloud API Secret">
+        <br>
+        <input type="text" class="form-control" id="bootstrap" placeholder="Enter Cluster Bootstrap">
+        <br>
+        <input type="text" class="form-control" id="accountid" placeholder="Enter Account Number">
+        <br>
+        <input type="text" class="form-control" id="amount" placeholder="Enter Amount">
+        <br>
+        <button id="source" type="button" class="btn btn-primary" onclick="makepayment()">Authorize Payment</button>
+      </div>
+    </div>
+  </td>
+</tr>
+</table>
+<script>
+  function makepayment() {
+    $.ajax({
+      type: "POST",
+      url: '/makepayment',
+      data: JSON.stringify({"cluster": {"bootstrap.servers":$("#bootstrap").val(), "sasl.username":$("#username").val(), "sasl.password":$("#password").val(), "sasl.mechanism":"PLAIN", "security.protocol": "SASL_SSL"}, "payload": {"account_id":$("#accountid").val(), "amount": parseFloat($("#amount").val())}}),
+      dataType: 'json',
+      contentType: 'application/json',
+      async: true,
+      success: function(result) {
+        $("#bootstrap").prop("disabled", true);
+        $("#username").prop("disabled", true);
+        $("#password").prop("disabled", true);
+      }
+    });
+  }
+</script>
+</body>
+</html>
